@@ -1,4 +1,5 @@
-class Nekretnina:
+class nekretnina:
+
     def __init__(self, adresa, kvadratura, bazna_cijena):
         self.adresa = adresa
         self.kvadratura = kvadratura
@@ -8,12 +9,11 @@ class Nekretnina:
         return self.kvadratura * self.bazna_cijena
 
     def ispisi_info(self):
-        print(f"Adresa: {self.adresa}")
-        print(f"Kvadratura: {self.kvadratura} m²")
-        print(f"Cijena: {self.izracunaj_cijenu():.2f} EUR")
+        return f"Adresa: {self.adresa}, Kvadratura: {self.kvadratura} m², Cijena: {self.izracunaj_cijenu():.2f} EUR"
 
 
-class Stan(Nekretnina):
+class stan(nekretnina):
+
     def __init__(self, adresa, kvadratura, bazna_cijena, kat, ima_lift):
         super().__init__(adresa, kvadratura, bazna_cijena)
         self.kat = kat
@@ -21,23 +21,18 @@ class Stan(Nekretnina):
 
     def izracunaj_cijenu(self):
         cijena = super().izracunaj_cijenu()
-
-        if self.kat > 2 and not self.ima_lift:
-            cijena *= 0.9  # -10%
-
         if self.ima_lift:
-            cijena *= 1.05  # +5%
-
+            cijena *= 1.05
+        elif self.kat > 2:
+            cijena *= 0.90
         return cijena
 
     def ispisi_info(self):
-        super().ispisi_info()
-        print(f"Kat: {self.kat}")
-        print(f"Lift: {'DA' if self.ima_lift else 'NE'}")
-        print("-" * 40)
+        return f"Stan | Kat: {self.kat}, Lift: {self.ima_lift}, Adresa: {self.adresa}, Kvadratura: {self.kvadratura} m², Cijena: {self.izracunaj_cijenu():.2f} EUR"
 
 
-class Kuca(Nekretnina):
+class kuca(nekretnina):
+
     def __init__(self, adresa, kvadratura, bazna_cijena, povrsina_okucnice):
         super().__init__(adresa, kvadratura, bazna_cijena)
         self.povrsina_okucnice = povrsina_okucnice
@@ -46,96 +41,122 @@ class Kuca(Nekretnina):
         return super().izracunaj_cijenu() + self.povrsina_okucnice * 100
 
     def ispisi_info(self):
-        super().ispisi_info()
-        print(f"Površina okućnice: {self.povrsina_okucnice} m²")
-        print("-" * 40)
-def unos_broja(poruka):
-    while True:
-        try:
-            return float(input(poruka))
-        except ValueError:
-            print("Unesite ispravan broj!")
+        return f"Kuća | Okućnica: {self.povrsina_okucnice} m², Adresa: {self.adresa}, Kvadratura: {self.kvadratura} m², Cijena: {self.izracunaj_cijenu():.2f} EUR"
 
 
-def unos_int(poruka):
-    while True:
-        try:
-            return int(input(poruka))
-        except ValueError:
-            print(" Unesite cijeli broj!")
+def ispisi_izbornik():
+    print("\nIzbornik:")
+    print("1. Unesi stan")
+    print("2. Unesi kuću")
+    print("3. Prikaži sve nekretnine")
+    print("4. Prodaja nekretnine")
+    print("5. Izlaz")
+    print("6. Pretraga po budžetu")
 
 
 nekretnine = []
 
 while True:
-    print("\n===== IZBORNIK =====")
-    print("1. Unos stana")
-    print("2. Unos kuće")
-    print("3. Ispis svih nekretnina")
-    print("4. Prodaja (brisanje) nekretnine")
-    print("5. Pretraga po budžetu (BONUS)")
-    print("0. Izlaz")
-    
-    izbor = input("Odabir: ")
+    ispisi_izbornik()
+    izbor = input("Unesite izbor: ")
 
     if izbor == "1":
-        print("\n--- Unos stana ---")
         adresa = input("Adresa: ")
-        kv = unos_broja("Kvadratura: ")
-        baza = unos_broja("Bazna cijena po m²: ")
-        kat = unos_int("Kat: ")
-        lift = input("Ima li lift? (da/ne): ").lower() == "da"
 
-        stan = Stan(adresa, kv, baza, kat, lift)
-        nekretnine.append(stan)
-        print(" Stan dodan!")
+        while True:
+            try:
+                kv = float(input("Kvadratura (m²): "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        while True:
+            try:
+                bazna = float(input("Bazna cijena po m²: "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        while True:
+            try:
+                kat = int(input("Kat: "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        ima_lift = input("Ima li lift (da/ne): ").lower() == "da"
+
+        nekretnine.append(stan(adresa, kv, bazna, kat, ima_lift))
+        print("Stan uspješno unesen.")
 
     elif izbor == "2":
-        print("\n--- Unos kuće ---")
         adresa = input("Adresa: ")
-        kv = unos_broja("Kvadratura: ")
-        baza = unos_broja("Bazna cijena po m²: ")
-        okucnica = unos_broja("Površina okućnice: ")
 
-        kuca = Kuca(adresa, kv, baza, okucnica)
-        nekretnine.append(kuca)
-        print(" Kuća dodana!")
+        while True:
+            try:
+                kv = float(input("Kvadratura (m²): "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        while True:
+            try:
+                bazna = float(input("Bazna cijena po m²: "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        while True:
+            try:
+                oku = float(input("Površina okućnice (m²): "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        nekretnine.append(kuca(adresa, kv, bazna, oku))
+        print("Kuća uspješno unesena.")
 
     elif izbor == "3":
-        print("\n--- Sve nekretnine ---")
         if not nekretnine:
-            print("Nema spremljenih nekretnina.")
+            print("Nema unesenih nekretnina.")
         else:
             for n in nekretnine:
-                n.ispisi_info()
+                print(n.ispisi_info())
 
     elif izbor == "4":
-        print("\n--- Prodaja nekretnine ---")
-        adresa_za_brisanje = input("Unesite adresu: ")
+        adresa = input("Unesite adresu nekretnine za prodaju: ")
+        pronađeno = False
 
         for n in nekretnine:
-            if n.adresa.lower() == adresa_za_brisanje.lower():
+            if n.adresa == adresa:
                 nekretnine.remove(n)
-                print("Nekretnina uspješno prodana i uklonjena.")
+                print("Nekretnina je prodana i uklonjena iz baze.")
+                pronađeno = True
                 break
-        else:
-            print(" Nekretnina nije pronađena!")
 
-    elif izbor == "5":
-        print("\n--- Pretraga po budžetu ---")
-        budzet = unos_broja("Maksimalni iznos: ")
+        if not pronađeno:
+            print("Nekretnina s tom adresom nije pronađena.")
 
+    elif izbor == "6":
+        while True:
+            try:
+                budzet = float(input("Unesite maksimalni budžet (EUR): "))
+                break
+            except ValueError:
+                print("Pogrešan unos, pokušajte ponovo.")
+
+        print("Nekretnine unutar budžeta:")
         filtrirane = [n for n in nekretnine if n.izracunaj_cijenu() <= budzet]
 
-        if not filtrirane:
-            print(" Nema nekretnina unutar zadanog budžeta.")
-        else:
+        if filtrirane:
             for n in filtrirane:
-                n.ispisi_info()
+                print(n.ispisi_info())
+        else:
+            print("Nema nekretnina unutar navedenog budžeta.")
 
-    elif izbor == "0":
-        print("Izlaz iz programa...")
+    elif izbor == "5":
+        print("Izlaz iz programa.")
         break
 
     else:
-        print("Pogrešan odabir! Pokušajte ponovno.")
+        print("Nevažeća opcija, pokušajte ponovo.")
